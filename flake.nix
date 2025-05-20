@@ -16,7 +16,6 @@
       bisq = oldPkgs.callPackage ./pkgs/bisq {};
       bisq-desktop = self.packages."${system}".bisq;
       bisq2 = pkgs.callPackage ./pkgs/bisq2 {};
-      openimajgrabber = pkgs.callPackage ./pkgs/openimajgrabber {};
       sparrow = pkgs.callPackage ./pkgs/sparrow {};
     };
   };
