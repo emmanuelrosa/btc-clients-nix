@@ -15,7 +15,6 @@
   gnugrep,
   tor,
   zlib,
-  openimajgrabber,
   imagemagick,
   gzip,
   gnupg,
@@ -25,13 +24,13 @@
 
 let
   pname = "sparrow";
-  version = "2.1.3";
+  version = "2.2.0";
 
   openjdk = jdk23.override { enableJavaFX = true; };
 
   src = fetchurl {
-    url = "https://github.com/sparrowwallet/${pname}/releases/download/${version}/${pname}-${version}-x86_64.tar.gz";
-    hash = "sha256-Fbq9+GmKL40QnxlKtbVYLiZRVbknY+YF/9rl3/cuLnA=";
+    url = "https://github.com/sparrowwallet/${pname}/releases/download/${version}/sparrowwallet-${version}-x86_64.tar.gz";
+    hash = "sha256-vQGm2kIvYHvJ4urxvkjrhwspfWbxunIEEEFu7cWLTYA=";
 
     # nativeBuildInputs, downloadToTemp, and postFetch are used to verify the signed upstream package.
     # The signature is not a self-contained file. Instead the SHA256 of the package is added to a manifest file.
@@ -49,7 +48,7 @@ let
       mkdir -m 700 -p $GNUPGHOME
       ln -s ${manifest} ./manifest.txt
       ln -s ${manifestSignature} ./manifest.txt.asc
-      ln -s $downloadedFile ./${pname}-${version}-x86_64.tar.gz
+      ln -s $downloadedFile ./sparrowwallet-${version}-x86_64.tar.gz
       gpg --import ${publicKey}
       gpg --verify manifest.txt.asc manifest.txt
       sha256sum -c --ignore-missing manifest.txt
@@ -60,12 +59,12 @@ let
 
   manifest = fetchurl {
     url = "https://github.com/sparrowwallet/${pname}/releases/download/${version}/${pname}-${version}-manifest.txt";
-    hash = "sha256-Y7A/q8VqTHoJbLkLMUYxiYCbvhCEfTQS+4Z5b9yCy+k=";
+    hash = "sha256-0mFMXuTfFnc1tEG6wKBS+ZF8pPtTmMj44IIX5U2h3EE=";
   };
 
   manifestSignature = fetchurl {
     url = "https://github.com/sparrowwallet/${pname}/releases/download/${version}/${pname}-${version}-manifest.txt.asc";
-    hash = "sha256-iIYqGdcJgIbPok6ue62l6dGlg+KdzqBkulyMqFjk8gk=";
+    hash = "sha256-3sMBT9Wu0bs7EAB5gnrdqCVPeKA4C/m+1XyVb+omRZY=";
   };
 
   publicKey = ./publickey.asc;
@@ -182,7 +181,10 @@ let
       rm -fR com.github.sarxos.webcam.capture/com/github/sarxos/webcam/ds/buildin/lib/linux_armel
       rm -fR com.github.sarxos.webcam.capture/com/github/sarxos/webcam/ds/buildin/lib/linux_armhf
       rm -fR com.github.sarxos.webcam.capture/com/github/sarxos/webcam/ds/buildin/lib/linux_x86
-      rm com.github.sarxos.webcam.capture/com/github/sarxos/webcam/ds/buildin/lib/linux_x64/OpenIMAJGrabber.so
+      rm -fR openpnp.capture.java/darwin-aarch64
+      rm -fR openpnp.capture.java/darwin-x86-64
+      rm -fR openpnp.capture.java/linux-aarch64
+      rm -fR openpnp.capture.java/win32-x86-64
       rm -fR com.nativelibs4java.bridj/org/bridj/lib/linux_arm32_armel
       rm -fR com.nativelibs4java.bridj/org/bridj/lib/linux_armel
       rm -fR com.nativelibs4java.bridj/org/bridj/lib/linux_armhf
@@ -203,14 +205,13 @@ let
       # Replace the embedded Tor binary (which is in a Tar archive)
       # with one from Nixpkgs.
       gzip -c ${torWrapper}  > tor.gz
-      cp tor.gz modules/kmp.tor.binary.linuxx64/kmptor/linux/x64/tor.gz
+      cp tor.gz modules/io.matthewnelson.kmp.tor.resource.exec.tor/io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-libc/x86_64/tor.gz
     '';
 
     installPhase = ''
       mkdir -p $out
       cp manifest.txt $out/
       cp -r modules/ $out/
-      ln -s ${openimajgrabber}/lib/OpenIMAJGrabber.so $out/modules/com.github.sarxos.webcam.capture/com/github/sarxos/webcam/ds/buildin/lib/linux_x64/OpenIMAJGrabber.so
     '';
   };
 in
