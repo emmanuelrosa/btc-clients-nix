@@ -16,3 +16,4 @@ The following packages are included in this Nix flake:
 - **bisq-desktop** - An alias for the **bisq** package.
 - **bisq2** - [Bisq 2](https://github.com/bisq-network/bisq2) will be the successor to Bisq v1 and will support multiple trade protocols, multiple privacy networks and multiple identities.
 - **sparrow** - [Sparrow](https://github.com/sparrowwallet) is a desktop Bitcoin wallet focused on security and privacy.
+- **update-checker** - A BASH script for me to quickly check GitHub for updates to the above packages. 

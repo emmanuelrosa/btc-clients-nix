@@ -17,6 +17,10 @@
       bisq-desktop = self.packages."${system}".bisq;
       bisq2 = pkgs.callPackage ./pkgs/bisq2 {};
       sparrow = pkgs.callPackage ./pkgs/sparrow {};
+
+      update-checker = pkgs.callPackage ./pkgs/update-checker {
+        inherit (self.packages.x86_64-linux) bisq bisq2 sparrow;
+      };
     };
   };
 }
