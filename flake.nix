@@ -22,5 +22,12 @@
         inherit (self.packages.x86_64-linux) bisq bisq2 sparrow;
       };
     };
+
+    packages.aarch64-linux = let
+      system = "aarch64-linux";
+      pkgs = nixpkgs.legacyPackages."${system}";
+    in {
+      sparrow = pkgs.callPackage ./pkgs/sparrow {};
+    };
   };
 }
