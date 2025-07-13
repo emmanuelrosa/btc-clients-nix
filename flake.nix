@@ -28,6 +28,7 @@
       pkgs = nixpkgs.legacyPackages."${system}";
     in {
       sparrow = pkgs.callPackage ./pkgs/sparrow {};
+      bisq2 = pkgs.callPackage ./pkgs/bisq2 {};
     };
   };
 }
