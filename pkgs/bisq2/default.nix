@@ -1,5 +1,5 @@
 {
-  stdenvNoCC,
+  stdenv,
   lib,
   makeBinaryWrapper,
   runtimeShell,
@@ -15,6 +15,11 @@
   zip,
   gnupg,
   coreutils,
+
+  # Used by the testing package bisq2-webcam-app
+  socat,
+  libv4l,
+  unzip,
 }:
 
 let
@@ -44,8 +49,18 @@ let
       hash = "sha256-PrRYZLT0xv82dUscOBgQGKNf6zwzWUDhriAffZbNpmI=";
     };
   };
+
+  binPath = lib.makeBinPath [
+    coreutils
+    tor
+  ];
+
+  libraryPath = lib.makeLibraryPath [
+    stdenv.cc.cc
+    libv4l
+  ];
 in
-stdenvNoCC.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: rec {
   inherit version;
 
   pname = "bisq2";
@@ -136,21 +151,11 @@ stdenvNoCC.mkDerivation rec {
 
     install -D -m 777 ${bisq-launcher ""} $out/bin/bisq2
     substituteAllInPlace $out/bin/bisq2
-    wrapProgram $out/bin/bisq2 --prefix PATH : ${
-      lib.makeBinPath [
-        coreutils
-        tor
-      ]
-    }
+    wrapProgram $out/bin/bisq2 --prefix PATH : ${binPath} --prefix LD_LIBRARY_PATH : ${libraryPath}
 
     install -D -m 777 ${bisq-launcher "-Dglass.gtk.uiScale=2.0"} $out/bin/bisq2-hidpi
     substituteAllInPlace $out/bin/bisq2-hidpi
-    wrapProgram $out/bin/bisq2-hidpi --prefix PATH : ${
-      lib.makeBinPath [
-        coreutils
-        tor
-      ]
-    }
+    wrapProgram $out/bin/bisq2-hidpi --prefix PATH : ${binPath} --prefix LD_LIBRARY_PATH : ${libraryPath}
 
     for n in 16 24 32 48 64 96 128 256; do
       size=$n"x"$n
@@ -160,6 +165,12 @@ stdenvNoCC.mkDerivation rec {
 
     runHook postInstall
   '';
+
+  # The bisq2.webcam-app package is for maintainers to test scanning QR codes.
+  passthru.webcam-app = import ./webcam-app.nix {
+    inherit stdenv lib makeBinaryWrapper writeShellScript jdk unzip socat libraryPath;
+    bisq2 = finalAttrs.finalPackage.out;
+  };
 
   meta = {
     description = "Decentralized bitcoin exchange network";
@@ -175,4 +186,4 @@ stdenvNoCC.mkDerivation rec {
       "aarch64-linux"
     ];
   };
-}
+})
