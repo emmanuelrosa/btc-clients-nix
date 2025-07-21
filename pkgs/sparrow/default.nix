@@ -36,6 +36,7 @@ let
     }
     ."${stdenvNoCC.hostPlatform.system}";
 
+  # nixpkgs-update: no auto update
   src = fetchurl {
     url = "https://github.com/sparrowwallet/${pname}/releases/download/${version}/sparrowwallet-${version}-${sparrowArch}.tar.gz";
     hash =
