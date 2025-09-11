@@ -2,7 +2,6 @@
   stdenv,
   lib,
   makeBinaryWrapper,
-  runtimeShell,
   fetchurl,
   makeDesktopItem,
   copyDesktopItems,
@@ -10,15 +9,17 @@
   jdk23,
   dpkg,
   writeShellScript,
-  bash,
   tor,
   zip,
   gnupg,
   coreutils,
 
-  # Used by the testing package bisq2-webcam-app
-  socat,
+  # Used by the bundled webcam-app
   libv4l,
+
+  # Used by the testing package bisq2-webcam-app
+  callPackage,
+  socat,
   unzip,
 }:
 
@@ -65,6 +66,7 @@ stdenv.mkDerivation (finalAttrs: rec {
 
   pname = "bisq2";
 
+  # nixpkgs-update: no auto update
   src = fetchurl {
     url = "https://github.com/bisq-network/bisq2/releases/download/v${version}/Bisq-${version}.deb";
     hash = "sha256-kNQbTZoHFR2qFw/Jjc9iaEews/oUOYoJanmbVH/vs44=";
@@ -167,8 +169,11 @@ stdenv.mkDerivation (finalAttrs: rec {
   '';
 
   # The bisq2.webcam-app package is for maintainers to test scanning QR codes.
-  passthru.webcam-app = import ./webcam-app.nix {
-    inherit stdenv lib makeBinaryWrapper writeShellScript jdk unzip socat libraryPath;
+  passthru.webcam-app = callPackage ./webcam-app.nix {
+    inherit
+      jdk
+      libraryPath
+      ;
     bisq2 = finalAttrs.finalPackage.out;
   };
 
