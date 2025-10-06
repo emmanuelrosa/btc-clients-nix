@@ -38,9 +38,6 @@
 }:
 
 let
-  pname = "sparrow";
-  version = "2.3.0";
-
   sparrowArch =
     {
       x86_64-linux = "x86_64";
@@ -48,80 +45,67 @@ let
     }
     ."${stdenvNoCC.hostPlatform.system}";
 
-  # nixpkgs-update: no auto update
-  src = fetchurl {
-    url = "https://github.com/sparrowwallet/${pname}/releases/download/${version}/sparrowwallet-${version}-${sparrowArch}.tar.gz";
-    hash =
-      {
-        x86_64-linux = "sha256-PmZpxyTXzQMIAGH0edxEHCwzb+k8HBJYXnfyZkpCnoM=";
-        aarch64-linux = "sha256-A61KB2KhyKCGLMrcIs4bJk7pqcfKHe8Vqn3b4bxwysM=";
-      }
-      ."${stdenvNoCC.hostPlatform.system}";
+  sparrow-unwrapped = stdenvNoCC.mkDerivation rec {
+    version = "2.3.0";
+    pname = "sparrow-unwrapped";
+    nativeBuildInputs = [
+      copyDesktopItems
+      udevCheckHook
+      imagemagick
+      gnupg
+    ];
 
-    # nativeBuildInputs, downloadToTemp, and postFetch are used to verify the signed upstream package.
-    # The signature is not a self-contained file. Instead the SHA256 of the package is added to a manifest file.
+    # nixpkgs-update: no auto update
+    src = fetchurl {
+      url = "https://github.com/sparrowwallet/sparrow/releases/download/${version}/sparrowwallet-${version}-${sparrowArch}.tar.gz";
+      hash =
+        {
+          x86_64-linux = "sha256-PmZpxyTXzQMIAGH0edxEHCwzb+k8HBJYXnfyZkpCnoM=";
+          aarch64-linux = "sha256-A61KB2KhyKCGLMrcIs4bJk7pqcfKHe8Vqn3b4bxwysM=";
+        }
+        ."${stdenvNoCC.hostPlatform.system}";
+    };
+
+    # preUnpack is used to verify the signed upstream package.
+    # The signature is not a self-contained file.
+    # Instead the SHA256 of the package is added to a manifest file.
     # The manifest file is signed by the owner of the public key, Craig Raw.
     # Thus to verify the signed package, the manifest is verified with the public key,
     # and then the package is verified against the manifest.
     # The public key is obtained from https://keybase.io/craigraw/pgp_keys.asc
     # and is included in this repo to provide reproducibility.
-    nativeBuildInputs = [ gnupg ];
-    downloadToTemp = true;
+    preUnpack =
+      let
+        manifest = fetchurl {
+          url = "https://github.com/sparrowwallet/sparrow/releases/download/${version}/sparrow-${version}-manifest.txt";
+          hash = "sha256-QNlbu9Y7kJ0fvqHubyP8/yAIEiw6mWzVnsyJTXJcWqk=";
+        };
 
-    postFetch = ''
-      pushd $(mktemp -d)
-      export GNUPGHOME=$PWD/gnupg
-      mkdir -m 700 -p $GNUPGHOME
-      ln -s ${manifest} ./manifest.txt
-      ln -s ${manifestSignature} ./manifest.txt.asc
-      ln -s $downloadedFile ./sparrowwallet-${version}-${sparrowArch}.tar.gz
-      gpg --import ${publicKey}
-      gpg --verify manifest.txt.asc manifest.txt
-      sha256sum -c --ignore-missing manifest.txt
-      popd
-      mv $downloadedFile $out
-    '';
-  };
+        manifestSignature = fetchurl {
+          url = "https://github.com/sparrowwallet/sparrow/releases/download/${version}/sparrow-${version}-manifest.txt.asc";
+          hash = "sha256-H3PDTGypdqhCtCXTecwLUNrlhGvxESDaKb4O2LOXXbA=";
+        };
 
-  manifest = fetchurl {
-    url = "https://github.com/sparrowwallet/${pname}/releases/download/${version}/${pname}-${version}-manifest.txt";
-    hash = "sha256-QNlbu9Y7kJ0fvqHubyP8/yAIEiw6mWzVnsyJTXJcWqk=";
-  };
-
-  manifestSignature = fetchurl {
-    url = "https://github.com/sparrowwallet/${pname}/releases/download/${version}/${pname}-${version}-manifest.txt.asc";
-    hash = "sha256-H3PDTGypdqhCtCXTecwLUNrlhGvxESDaKb4O2LOXXbA=";
-  };
-
-  publicKey = ./publickey.asc;
-
-  sparrow-icons = stdenvNoCC.mkDerivation {
-    inherit version src;
-    pname = "sparrow-icons";
-    nativeBuildInputs = [ imagemagick ];
-
-    installPhase = ''
-      for n in 16 24 32 48 64 96 128 256; do
-        size=$n"x"$n
-        mkdir -p $out/hicolor/$size/apps
-        convert lib/Sparrow.png -resize $size $out/hicolor/$size/apps/sparrow-desktop.png
-        done;
-    '';
-  };
-
-  sparrow-unwrapped = stdenvNoCC.mkDerivation {
-    inherit version src;
-    pname = "sparrow-unwrapped";
-    nativeBuildInputs = [
-      copyDesktopItems
-      udevCheckHook
-    ];
+        publicKey = ./publickey.asc;
+      in
+      ''
+        pushd $(mktemp -d)
+        export GNUPGHOME=$PWD/gnupg
+        mkdir -m 700 -p $GNUPGHOME
+        ln -s ${manifest} ./manifest.txt
+        ln -s ${manifestSignature} ./manifest.txt.asc
+        ln -s $src ./sparrowwallet-${version}-${sparrowArch}.tar.gz
+        gpg --import ${publicKey}
+        gpg --verify manifest.txt.asc manifest.txt
+        sha256sum -c --ignore-missing manifest.txt
+        popd
+      '';
 
     desktopItems = [
       (makeDesktopItem {
-        name = "sparrow-desktop";
-        exec = "sparrow-desktop";
-        icon = "sparrow-desktop";
+        name = "sparrow";
+        exec = "sparrow";
+        icon = "sparrow";
         desktopName = "Sparrow Bitcoin Wallet";
         genericName = "Bitcoin Wallet";
         categories = [
@@ -144,11 +128,16 @@ let
 
       mkdir -p $out/bin
       mkdir -p $out/etc/udev
+      mkdir -p $out/share/icons/hicolor
       cp bin/Sparrow $out/bin/
       cp -r lib/ $out/
+      rm $out/lib/runtime/conf/udev/README.md
 
-      mkdir -p $out/share/icons
-      ln -s ${sparrow-icons}/hicolor $out/share/icons
+      for n in 16 24 32 48 64 96 128 256; do
+        size=$n"x"$n
+        mkdir -p $out/share/icons/hicolor/$size/apps
+        convert lib/Sparrow.png -resize $size $out/share/icons/hicolor/$size/apps/sparrow.png
+      done;
 
       mkdir -p $out/etc/udev/
       ln -s $out/lib/runtime/conf/udev $out/etc/udev/rules.d
@@ -160,8 +149,8 @@ let
   };
 in
 buildFHSEnv {
-  pname = "sparrow-desktop";
-  inherit version;
+  pname = "sparrow";
+  version = sparrow-unwrapped.version;
   runScript = "${sparrow-unwrapped}/bin/Sparrow";
 
   targetPkgs = pkgs: [
@@ -195,9 +184,7 @@ buildFHSEnv {
   ];
 
   extraInstallCommands = ''
-    mkdir -p $out/share
-    ln -sf ${sparrow-unwrapped}/share/applications $out/share
-    ln -sf ${sparrow-unwrapped}/share/icons $out/share
+    ln -sf ${sparrow-unwrapped}/share $out
     ln -sf ${sparrow-unwrapped}/etc $out
   '';
 
@@ -218,6 +205,6 @@ buildFHSEnv {
       "x86_64-linux"
       "aarch64-linux"
     ];
-    mainProgram = "sparrow-desktop";
+    mainProgram = "sparrow";
   };
 }
