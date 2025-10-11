@@ -61,7 +61,7 @@ let
       hash =
         {
           x86_64-linux = "sha256-PmZpxyTXzQMIAGH0edxEHCwzb+k8HBJYXnfyZkpCnoM=";
-          aarch64-linux = "sha256-A61KB2KhyKCGLMrcIs4bJk7pqcfKHe8Vqn3b4bxwysM=";
+          aarch64-linux = "sha256-H4S07T/oskEe8QcBieUogaZGVRJ+CihaH569e5QUScc=";
         }
         ."${stdenvNoCC.hostPlatform.system}";
     };
