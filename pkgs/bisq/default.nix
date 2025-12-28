@@ -43,11 +43,11 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "bisq-desktop";
-  version = "1.9.21";
+  version = "1.9.22";
 
   src = fetchurl {
     url = "https://github.com/bisq-network/bisq/releases/download/v${version}/Bisq-64bit-${version}.deb";
-    hash = "sha256-6nbbUnAL442wxPzL0aslScxdqTBpWkTdneGM5qXzKeE=";
+    hash = "sha256-NWoz8JrlMFKT1hsQY2A+otR1d6i+HbbQJjhwikhW7kw=";
   };
 
   nativeBuildInputs = [
@@ -124,7 +124,7 @@ stdenv.mkDerivation rec {
     homepage = "https://bisq.network";
     sourceProvenance = with sourceTypes; [ binaryBytecode ];
     license = licenses.mit;
-    maintainers = with maintainers; [ juaningan emmanuelrosa ];
+    maintainers = with maintainers; [ emmanuelrosa ];
     platforms = [ "x86_64-linux" ];
     mainProgram = "bisq-desktop";
   };
