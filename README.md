@@ -18,3 +18,7 @@ The following packages are included in this Nix flake:
 - **sparrow** - [Sparrow](https://github.com/sparrowwallet) is a desktop Bitcoin wallet focused on security and privacy.
 - **update-checker** - A BASH script for me to quickly check GitHub for updates to the above packages. 
 - **bisq2.webcam-app** - Launches the [Bisq 2](https://github.com/bisq-network/bisq2) webcam app, to test QR code scanning. Intended for package maintainers. 
+
+## Other packages
+
+- **Bitcoin Knots BIP-110 Activation Client** - A package for this UASF client is available in another repo (I'm assuming it will eventually be merged into Bitcoin Knots). See [https://github.com/emmanuelrosa/bitcoin-knots-bip-110-nix](https://github.com/emmanuelrosa/bitcoin-knots-bip-110-nix).
