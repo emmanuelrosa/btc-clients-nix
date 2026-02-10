@@ -46,7 +46,7 @@ let
     ."${stdenvNoCC.hostPlatform.system}";
 
   sparrow-unwrapped = stdenvNoCC.mkDerivation rec {
-    version = "2.3.1";
+    version = "2.4.0";
     pname = "sparrow-unwrapped";
     nativeBuildInputs = [
       copyDesktopItems
@@ -55,13 +55,16 @@ let
       gnupg
     ];
 
+    # An example of how to get the source hashes
+    # nix hash convert --hash-algo sha256 --to sri $(nix-prefetch-url https://github.com/sparrowwallet/sparrow/releases/download/2.4.0/sparrowwallet-2.4.0-aarch64.tar.gz)
+
     # nixpkgs-update: no auto update
     src = fetchurl {
       url = "https://github.com/sparrowwallet/sparrow/releases/download/${version}/sparrowwallet-${version}-${sparrowArch}.tar.gz";
       hash =
         {
-          x86_64-linux = "sha256-AcGjSLxjv9IWs4WIuAq/6R8K6cq750wod9y9qhbBUkI=";
-          aarch64-linux = "sha256-5bVfkbGDlWGFJeRHmDOy8YD45Iex+NmWh9Uoequ6AxI=";
+          x86_64-linux = "sha256-9rkyTEi+KvFDvMCSNkedxX9lYZPZvGwCClLz87DXrKc=";
+          aarch64-linux = "sha256-TvVJQVSkroZfl3VH5hxHpbMw5SZMN1rqROSDKhVV2x4=";
         }
         ."${stdenvNoCC.hostPlatform.system}";
     };
@@ -78,12 +81,12 @@ let
       let
         manifest = fetchurl {
           url = "https://github.com/sparrowwallet/sparrow/releases/download/${version}/sparrow-${version}-manifest.txt";
-          hash = "sha256-cq/XtWdkdRgUC9HPYRfSe9/RXuNYW6AjAgcgff57Q+E=";
+          hash = "sha256-hPgRK1pMnhpAOWFO+bySXgE7I1rJf1MVrA5FdIkSgu4=";
         };
 
         manifestSignature = fetchurl {
           url = "https://github.com/sparrowwallet/sparrow/releases/download/${version}/sparrow-${version}-manifest.txt.asc";
-          hash = "sha256-KzlrP11EWypL3fxRZ7RNVivfBueIUXHzBeBcob2xg68=";
+          hash = "sha256-suHr5oM0QVVGQnv8zqFBAuHCUs3Ss1O9U3wx9Exmy7U=";
         };
 
         publicKey = ./publickey.asc;
