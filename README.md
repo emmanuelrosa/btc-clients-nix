@@ -16,8 +16,14 @@ The following packages are included in this Nix flake:
 - **bisq-desktop** - An alias for the **bisq** package.
 - **bisq2** - [Bisq 2](https://github.com/bisq-network/bisq2) will be the successor to Bisq v1 and will support multiple trade protocols, multiple privacy networks and multiple identities.
 - **sparrow** - [Sparrow](https://github.com/sparrowwallet) is a desktop Bitcoin wallet focused on security and privacy.
+
+### Maintenance packages
+
+These packages are used to help me maintain this repository:
+
+- **sparrow-get-source-hashes** - A BASH script for me to get the SHA256 hashes for a specific version of Sparrow wallet.
 - **update-checker** - A BASH script for me to quickly check GitHub for updates to the above packages. 
-- **bisq2.webcam-app** - Launches the [Bisq 2](https://github.com/bisq-network/bisq2) webcam app, to test QR code scanning. Intended for package maintainers. 
+- **bisq2.webcam-app** - Launches the [Bisq 2](https://github.com/bisq-network/bisq2) webcam app, to test QR code scanning.
 
 ## Other packages
 
