@@ -18,13 +18,13 @@
   };
 in stdenv.mkDerivation rec {
   pname = "bitcoin-tui";
-  version = "0.8.2";
+  version = "0.8.3";
 
   src = fetchFromGitHub {
     owner = "janb84";
     repo = "bitcoin-tui";
     rev = "v${version}";
-    sha256 = "sha256-V9jEqW4bVEgULI4uzrN+8ZAEgWe/F8O5AZ0ug7X0hsQ=";
+    sha256 = "sha256-uiYOv+AkqEDxu58VjFppW19fV6Zoplge2hTKyyLkP1Q=";
   };
 
   patches = [ ./cmake.patch ];
