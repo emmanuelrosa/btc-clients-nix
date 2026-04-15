@@ -8,6 +8,7 @@
 , bisq
 , bisq2
 , sparrow
+, bitcoin-tui
 }: let
     checkForUpdate = { package, owner, repo, versionConverter ? "tee" }: ''
     echo "Checking ${package.pname} for update..."
@@ -32,4 +33,6 @@ in writeScriptBin "update-checker" ''
     ${checkForUpdate { package = bisq2; owner = "bisq-network"; repo = "bisq2"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
 
     ${checkForUpdate { package = sparrow; owner = "sparrowwallet"; repo = "sparrow"; }}
+
+    ${checkForUpdate { package = bitcoin-tui; owner = "janb84"; repo = "bitcoin-tui"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
 ''

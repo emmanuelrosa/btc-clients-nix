@@ -21,7 +21,7 @@
       bitcoin-tui = pkgs.callPackage ./pkgs/bitcoin-tui {};
 
       update-checker = pkgs.callPackage ./pkgs/update-checker {
-        inherit (self.packages.x86_64-linux) bisq bisq2 sparrow;
+        inherit (self.packages.x86_64-linux) bisq bisq2 sparrow bitcoin-tui;
       };
     };
 
