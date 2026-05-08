@@ -117,7 +117,7 @@ Now you can `nixos-rebuild switch` to activate your configuration.
 
 NOTE: When DATUM Gateway first starts up it may spam the systemd journal because bitcoind may not be ready.
 
-Nevertheless, check you can check the status of your DATUM Gateway instance(s) like this: `systemctl status datum_gateway*`.
+Nevertheless, you can check the status of your DATUM Gateway instance(s) like this: `systemctl status datum_gateway*`.
 
 Happy mining!
 
