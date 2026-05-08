@@ -19,6 +19,7 @@
       sparrow = pkgs.callPackage ./pkgs/sparrow {};
       sparrow-get-source-hashes = pkgs.callPackage ./pkgs/sparrow/get-source-hashes.nix {};
       bitcoin-tui = pkgs.callPackage ./pkgs/bitcoin-tui {};
+      rpcauth = pkgs.callPackage ./pkgs/rpcauth {};
 
       update-checker = pkgs.callPackage ./pkgs/update-checker {
         inherit (self.packages.x86_64-linux) bisq bisq2 sparrow bitcoin-tui;
@@ -33,6 +34,7 @@
       sparrow-get-source-hashes = pkgs.callPackage ./pkgs/sparrow/get-source-hashes.nix {};
       bisq2 = pkgs.callPackage ./pkgs/bisq2 {};
       bitcoin-tui = pkgs.callPackage ./pkgs/bitcoin-tui {};
+      rpcauth = pkgs.callPackage ./pkgs/rpcauth {};
     };
   };
 }

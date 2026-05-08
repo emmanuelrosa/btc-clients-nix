@@ -17,6 +17,7 @@ The following packages are included in this Nix flake:
 - **bisq2** - [Bisq 2](https://github.com/bisq-network/bisq2) will be the successor to Bisq v1 and will support multiple trade protocols, multiple privacy networks and multiple identities.
 - **sparrow** - [Sparrow](https://github.com/sparrowwallet) is a desktop Bitcoin wallet focused on security and privacy.
 - **bitcoin-tui** - [bitcoin-tui](https://github.com/janb84/bitcoin-tui) is a terminal UI for Bitcoin Core/Knots nodes.
+- **rpcauth** - [rpcauth](https://github.com/bitcoinknots/bitcoin/blob/a9aee730466ac67d35a3c03ee24676be5e045878/share/rpcauth/rpcauth.py) is a utility provided by Bitcoin Core (and derivatives such as Bitcoin Knots) which is used to generate username/password pairs for bitcoind RPC authentication. This package obtains rpcauth from Bitcoin Knots.
 
 ### Maintenance packages
 
