@@ -9,6 +9,8 @@
 , bisq2
 , sparrow
 , bitcoin-tui
+, rpcauth
+, datum_gateway
 }: let
     checkForUpdate = { package, owner, repo, versionConverter ? "tee" }: ''
     echo "Checking ${package.pname} for update..."
@@ -35,4 +37,8 @@ in writeScriptBin "update-checker" ''
     ${checkForUpdate { package = sparrow; owner = "sparrowwallet"; repo = "sparrow"; }}
 
     ${checkForUpdate { package = bitcoin-tui; owner = "janb84"; repo = "bitcoin-tui"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
+
+    ${checkForUpdate { package = rpcauth; owner = "bitcoinknots"; repo = "bitcoin"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
+
+    ${checkForUpdate { package = datum_gateway; owner = "OCEAN-xyz"; repo = "datum_gateway"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
 ''

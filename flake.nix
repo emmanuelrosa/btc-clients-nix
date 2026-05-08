@@ -23,7 +23,7 @@
       datum_gateway = pkgs.callPackage ./pkgs/datum_gateway {};
 
       update-checker = pkgs.callPackage ./pkgs/update-checker {
-        inherit (self.packages.x86_64-linux) bisq bisq2 sparrow bitcoin-tui;
+        inherit (self.packages.x86_64-linux) bisq bisq2 sparrow bitcoin-tui rpcauth datum_gateway;
       };
     };
 
