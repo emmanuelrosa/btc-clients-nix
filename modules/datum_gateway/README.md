@@ -120,3 +120,13 @@ NOTE: When DATUM Gateway first starts up it may spam the systemd journal because
 Nevertheless, check you can check the status of your DATUM Gateway instance(s) like this: `systemctl status datum_gateway*`.
 
 Happy mining!
+
+## DATUM Gateway Ports
+
+This NixOS module configures up to two DATUM Gateway instances. The table below shows the ports configured for each instance:
+
+| Instance | API/Dashboard port | Stratum port |
+|----------|--------------------|--------------|
+| **solo** | 7152               | 23334        | 
+| **pool** | 7153               | 23335        |  
+
