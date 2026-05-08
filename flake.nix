@@ -8,6 +8,8 @@
 
   outputs = { self, nixpkgs, oldNixpkgs }: {
 
+    nixosModules.datum_gateway = import ./modules/datum_gateway/module.nix;
+
     packages.x86_64-linux = let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages."${system}";
