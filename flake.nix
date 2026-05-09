@@ -9,6 +9,7 @@
   outputs = { self, nixpkgs, oldNixpkgs }: {
 
     nixosModules.datum_gateway = import ./modules/datum_gateway/module.nix;
+    nixosModules.playit = import ./modules/playit/module.nix;
 
     packages.x86_64-linux = let
       system = "x86_64-linux";
@@ -23,9 +24,11 @@
       bitcoin-tui = pkgs.callPackage ./pkgs/bitcoin-tui {};
       rpcauth = pkgs.callPackage ./pkgs/rpcauth {};
       datum_gateway = pkgs.callPackage ./pkgs/datum_gateway {};
+      playit = pkgs.callPackage ./pkgs/playit {};
+      playit-get-source-hashes = pkgs.callPackage ./pkgs/playit/get-source-hashes.nix {};
 
       update-checker = pkgs.callPackage ./pkgs/update-checker {
-        inherit (self.packages.x86_64-linux) bisq bisq2 sparrow bitcoin-tui rpcauth datum_gateway;
+        inherit (self.packages.x86_64-linux) bisq bisq2 sparrow bitcoin-tui rpcauth datum_gateway playit;
       };
     };
 
@@ -39,6 +42,7 @@
       bitcoin-tui = pkgs.callPackage ./pkgs/bitcoin-tui {};
       rpcauth = pkgs.callPackage ./pkgs/rpcauth {};
       datum_gateway = pkgs.callPackage ./pkgs/datum_gateway {};
+      playit = pkgs.callPackage ./pkgs/playit {};
     };
   };
 }
