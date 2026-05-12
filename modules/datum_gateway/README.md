@@ -2,7 +2,7 @@
 
 This [DATUM Gateway](https://github.com/OCEAN-xyz/datum_gateway) NixOS module can be used to configure one or two instances of DATUM Gateway.
 
-## Quick Start
+## Setup
 
 To use DATUM Gateway, you'll need to create a bitcoind RPC user. You can use the included `rpcauth` package to get the info you need:
 
@@ -106,7 +106,7 @@ Then, configure the service as follows:
 
    # If your node has a public IP address, set this to `true` to make the stratum ports accessible for mining (with Braiins).
    # If your node is behind a NAT and you want to mine solo with a miner in your LAN, set this to `true`.
-   # If your node is behind a NAT and you want to pool mine, set this to `false` and set up a TCP reverse proxy to tunnel the hashrate to your node. More on this coming soon.
+   # If your node is behind a NAT and you want to pool mine, set this to `false` and set up a TCP reverse proxy to tunnel the hashrate to your node.
    openFirewallPorts = true;
  };
 ```
@@ -115,18 +115,26 @@ There are more options in the `datum_gateway` NixOS module, but those above shou
 
 Now you can `nixos-rebuild switch` to activate your configuration.
 
-NOTE: When DATUM Gateway first starts up it may spam the systemd journal because bitcoind may not be ready.
+**NOTE:** When DATUM Gateway first starts up it may spam the systemd journal because bitcoind may not be ready.
 
 Nevertheless, you can check the status of your DATUM Gateway instance(s) like this: `systemctl status datum_gateway*`.
 
-Happy mining!
+### TCP reverse proxy tunnel setup
 
-## DATUM Gateway Ports
+Currently there are two ways to set up a TCP reverse proxy tunnel for your DATUM Gateway instances:
 
-This NixOS module configures up to two DATUM Gateway instances. The table below shows the ports configured for each instance:
+1. **playit.gg** - [Playit](https://playit.gg/) provides a tunneling service for gamers, but with a premium subscription you can get a TCP tunnel to expose your stratum port to the Internet. You can use the [playit](../playit/) module to _manually_ configure this tunnel.
+2. **hashgg** - [HashGG](https://github.com/paulscode/hashgg) provides an easy way to set up a TCP tunnel for DATUM Gateway. You can choose from either playit.gg (yes, the same one from above) or your own (Debian/Fedora) Linux VPS. You can use the [hashgg](../hashgg/) module for this setup.
 
-| Instance | API/Dashboard port | Stratum port |
-|----------|--------------------|--------------|
-| **solo** | 7152               | 23334        | 
-| **pool** | 7153               | 23335        |  
+From the options discussed above, the simplest method is *hashgg* with the *playit* mode.
 
+## DATUM Gateway data and ports
+
+This NixOS module configures up to two DATUM Gateway instances. The table below shows the default data directories and ports configured for each instance:
+
+| Instance | API/Dashboard port | Stratum port | Data directory                      |
+|----------|--------------------|--------------|-------------------------------------|
+| **solo** | 7152               | 23334        | /var/lib/datum_gateway/mainnet/solo | 
+| **pool** | 7153               | 23335        | /var/lib/datum_gateway/mainnet/pool | 
+
+**TIP:** You can access the API/Dashboard from your desktop's application menu.

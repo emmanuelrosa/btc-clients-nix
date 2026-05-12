@@ -11,6 +11,7 @@
 , libtasn1
 , p11-kit
 , libsodium
+, imagemagick
 }: stdenv.mkDerivation rec {
   pname = "datum_gateway";
   version = "0.4.1beta";
@@ -22,22 +23,35 @@
     leaveDotGit = true; # Allows the git commit hash to be added to the built executable.
   };
 
-  nativeBuildInputs = [ cmake
-                        pkg-config
-                        git
-                        curl
-                        jansson
-                        libmicrohttpd
-                        gnutls
-                        libtasn1
-                        p11-kit
-                        libsodium ];
+  nativeBuildInputs = [
+    cmake
+    pkg-config
+    git
+    curl
+    jansson
+    libmicrohttpd
+    gnutls
+    libtasn1
+    p11-kit
+    libsodium
+    imagemagick
+  ];
 
   installPhase = ''
+    runHook preInstall
+
     mkdir -p $out/{bin,share/doc}
 
     cp ./datum_gateway $out/bin/
     cp -r ${src}/doc/. $out/share/doc/
+
+    for n in 16 24 32 48 64 96 128 256; do
+      size=$n"x"$n
+      mkdir -p $out/share/icons/hicolor/$size/apps
+      magick convert ${src}/www/assets/icons/datum_logo.svg -resize $size $out/share/icons/hicolor/$size/apps/datum_gateway.png
+    done;
+
+    runHook postInstall
   '';
 
   meta = {

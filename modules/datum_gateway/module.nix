@@ -6,8 +6,6 @@
 with lib;
 let
   cfg = config.services.datum_gateway;
-  soloApiPort = 7152;
-  poolApiPort = 7153;
 in {
   options.services.datum_gateway = {
     enable = mkEnableOption "datum_gateway, implements lightweight efficient client side decentralized block template creation for true solo mining.";
@@ -49,11 +47,25 @@ in {
       description = "The group used to run datum_gateway";
     };
 
+    dataDirectory = mkOption {
+      type = types.path;
+      default = "/var/lib/datum_gateway";
+      example = "/var/lib/datum_gateway";
+      description = "The root path where datum_gateway stores its data.";
+    };
+
     bitcoind = {
+      address = mkOption {
+        type = types.str;
+        default = "127.0.0.1";
+        example = "127.0.0.1";
+        description = "The network IP used by the bitcoind RPC.";
+      };
+
       port = mkOption {
         type = types.port;
         default = 8332;
-        description = "The network port used by bitcoind RPC.";
+        description = "The network port used by the bitcoind RPC.";
       };
 
       workUpdatesDelay = mkOption {
@@ -77,6 +89,20 @@ in {
     };
 
     api = {
+      address = mkOption {
+        type = types.str;
+        default = "127.0.0.1";
+        example = "127.0.0.1";
+        description = "The network IP used by the API/Dashboard.";
+      };
+
+      port = mkOption {
+        type = types.port;
+        default = 7152;
+        example = 7152;
+        description = "Starting port number used by API/Dashboard. By default, 7152 for solo mining and 7153 for pool mining.";
+      };
+
       adminPasswordFile = mkOption {
         type = types.path;
         example = "/user/secret/location/admin_password.txt";
@@ -90,6 +116,13 @@ in {
         default = "0.0.0.0";
         example = "0.0.0.0";
         description = "The network IP used by stratum.";
+      };
+
+      port = mkOption {
+        type = types.port;
+        default = 23334;
+        example = 23334;
+        description = "Starting port number. By default, 23334 for solo mining and 23335 for pool mining.";
       };
 
       maxClientsPerThread = mkOption {
@@ -253,10 +286,10 @@ in {
     };
 
     blockNotifyCmd = let
-      cmd = port: "${getExe pkgs.curl} http://127.0.0.1:${builtins.toString port}/NOTIFY >/dev/null";
+      cmd = port: "${getExe pkgs.curl} -s --out-null http://${cfg.api.address}:${builtins.toString port}/NOTIFY";
       script = pkgs.writeShellScript "datum_gateway_notify.bash" ''
-        ${lib.optionalString (cfg.instances == "pool" || cfg.instances == "both") "${cmd poolApiPort}"}
-        ${lib.optionalString (cfg.instances == "solo" || cfg.instances == "both") "${cmd soloApiPort}"}
+        ${lib.optionalString (cfg.instances == "pool" || cfg.instances == "both") "${cmd (cfg.api.port + 1)}"}
+        ${lib.optionalString (cfg.instances == "solo" || cfg.instances == "both") "${cmd cfg.api.port}"}
       '';
     in mkOption {
       type = types.str;
@@ -266,6 +299,20 @@ in {
   };
 
   config = let
+    mkLauncher = instanceName: instanceCfg: let
+      desktopItem = pkgs.makeDesktopItem {
+        name = "datum_gateway-${instanceName}";
+        icon = "datum_gateway";
+        type = "Link";
+        url = "http://${cfg.api.address}:${builtins.toString instanceCfg.api.port}";
+        desktopName = "DATUM Gateway (${instanceName} mining)";
+      };
+    in pkgs.runCommand "datum_gateway-launcher" {} ''
+      mkdir -p $out/share
+      ln -s ${desktopItem}/share/applications $out/share/applications
+      ln -s ${cfg.package}/share/icons $out/share/icons
+    ''; 
+
     # Which instances to *exclude*.
     disabledInstances = {
       both = [];
@@ -276,11 +323,11 @@ in {
     # A data directory is created for each *enabled* instance.
     instances = builtins.removeAttrs {
       solo = rec {
-        dataDir = "/var/lib/datum_gateway/solo";
+        dataDir = "${cfg.dataDirectory}/${cfg.network}/solo";
         configFile = "${dataDir}/config.json";
 
         api = {
-          port = soloApiPort;
+          port = cfg.api.port;
         };
 
         datum = {
@@ -290,16 +337,16 @@ in {
         };
 
         stratum = {
-          port = 23334;
+          port = cfg.stratum.port;
         };
       };
 
       pool = rec {
-        dataDir = "/var/lib/datum_gateway/pool";
+        dataDir = "${cfg.dataDirectory}/${cfg.network}/pool";
         configFile = "${dataDir}/config.json";
 
         api = {
-          port = poolApiPort;
+          port = cfg.api.port + 1;
         };
 
         datum = {
@@ -309,7 +356,7 @@ in {
         };
 
         stratum = {
-          port = 23335;
+          port = cfg.stratum.port + 1;
         };
       };
     } disabledInstances;
@@ -343,7 +390,7 @@ in {
     in pkgs.writeText "datum_gateway_config.json" ''
     {
       "bitcoind": {
-        "rpcurl": "127.0.0.1:${builtins.toString cfg.bitcoind.port}",
+        "rpcurl": "${cfg.bitcoind.address}:${builtins.toString cfg.bitcoind.port}",
         "rpcuser": "${cfg.bitcoind.user}",
         "rpcpassword": "7893C4DC45BBC26ABE551E799D284048CA32B207",
         "work_update_seconds": ${builtins.toString cfg.bitcoind.workUpdatesDelay},
@@ -385,7 +432,7 @@ in {
       "api": {
         "admin_password": "4B7D5382EAD069730165A96FFB67A1FB84DE3194",
         "allow_insecure_auth": false,
-        "listen_addr": "127.0.0.1",
+        "listen_addr": "${builtins.toString cfg.api.address}",
         "listen_port": ${builtins.toString instanceCfg.api.port},
         "modify_conf": false
       },
@@ -438,6 +485,11 @@ in {
         message = "The datum pool host/IP is required.";
       }
     ];
+
+    environment.systemPackages = builtins.attrValues
+      (builtins.mapAttrs
+        (instance: instanceCfg: mkLauncher instance instanceCfg)
+        instances);
 
     systemd.tmpfiles.rules = builtins.attrValues (builtins.mapAttrs
       (instance: dataDir: "d ${dataDir} 770 ${cfg.user} ${cfg.group} -")
