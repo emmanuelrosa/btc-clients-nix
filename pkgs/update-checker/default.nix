@@ -12,6 +12,7 @@
 , rpcauth
 , datum_gateway
 , playit
+, hashgg
 }: let
     checkForUpdate = {
       package
@@ -52,4 +53,6 @@ in writeScriptBin "update-checker" ''
     ${checkForUpdate { package = datum_gateway; owner = "OCEAN-xyz"; repo = "datum_gateway"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
 
     ${checkForUpdate { package = playit; owner = "playit-cloud"; repo = "playit-agent"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; allowPrerelease = true; }}
+
+    ${checkForUpdate { package = hashgg; owner = "paulscode"; repo = "hashgg"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
 ''

@@ -32,7 +32,15 @@
       };
 
       update-checker = pkgs.callPackage ./pkgs/update-checker {
-        inherit (self.packages.x86_64-linux) bisq bisq2 sparrow bitcoin-tui rpcauth datum_gateway playit;
+        inherit (self.packages.x86_64-linux)
+          bisq
+          bisq2
+          sparrow
+          bitcoin-tui
+          rpcauth
+          datum_gateway
+          playit
+          hashgg;
       };
     };
 
