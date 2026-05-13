@@ -14,6 +14,7 @@
 , coreutils
 , nodejs
 , curl
+, cacert
 , netcat
 , jq
 , yq-go
@@ -98,6 +99,9 @@ let
       substituteInPlace $out/lib/hashgg/backend/server.js \
         --replace-fail 'const PORT = 3000' 'const PORT = ${builtins.toString port}'
 
+      substituteInPlace $out/lib/hashgg/backend/playit-manager.js \
+        --replace-fail "spawn(PLAYIT_BIN, ['--secret', secret]" "spawn(PLAYIT_BIN, ['--secret', secret, '--socket-path', '${dataDirectory}/playitd.socket']"
+
       for n in 16 24 32 48 64 96 128 256; do
         size=$n"x"$n
         mkdir -p $out/share/icons/hicolor/$size/apps
@@ -125,6 +129,9 @@ in buildFHSEnv {
     coreutils
     procps
     openssh
+    curl
+    cacert
+    playitd
     app
   ];
 
