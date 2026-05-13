@@ -23,8 +23,8 @@ The following packages are included in this Nix flake:
 
 The following NixOS modules are included in this Nix flake:
 
-- **datum_gateway** - [DATUM Gateway](https://github.com/OCEAN-xyz/datum_gateway) implements lightweight efficient client side decentralized block template creation for solo or pool mining.
-- **hashgg** - [HashGG](https://github.com/paulscode/hashgg) exposes your Datum Gateway stratum port to the public internet — so any miner, anywhere, can connect to your node and mine blocks you built. 
+- **datum_gateway** - [DATUM Gateway](modules/datum_gateway) implements lightweight efficient client side decentralized block template creation for solo or pool mining.
+- **hashgg** - [HashGG](modules/hashgg) exposes your Datum Gateway stratum port to the public internet — so any miner, anywhere, can connect to your node and mine blocks you built. 
 
 ### Maintenance packages
 

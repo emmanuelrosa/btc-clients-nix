@@ -138,3 +138,33 @@ This NixOS module configures up to two DATUM Gateway instances. The table below 
 | **pool** | 7153               | 23335        | /var/lib/datum_gateway/mainnet/pool | 
 
 **TIP:** You can access the API/Dashboard from your desktop's application menu.
+
+## Mining with your DATUM Gateway
+
+Whether it be playit.gg or your own VPS, once set up you should have a public TCP address and port that you can point your miner to. You can test your endpoint like this:
+
+```
+$ nix shell nixpkgs#netcat nixpkgs#jq
+
+$ (echo '{"id":1,"method":"mining.subscribe","params":[]}'; sleep 1) | nc ENDPOINT_IP ENDPOINT_PORT | head -1 | jq
+{
+    "error": null,
+    "id": 1,
+    "result": [
+       [
+         [
+          "mining.notify",
+          "xxxxxxxx"
+         ],
+         [
+          "mining.set_difficulty",
+          "xxxxxxxx"
+         ]
+      ],
+         "xxxxxxxx",
+         8
+      ]
+}
+```
+
+Perhaps specific to playit.gg, but the domain name they provided did not work, but the IP address did.
