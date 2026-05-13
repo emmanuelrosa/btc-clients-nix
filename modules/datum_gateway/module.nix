@@ -29,6 +29,13 @@ in {
       description = "The bitcoin network the bitcoind node is connected to.";
     };
 
+    logLevel = mkOption {
+      type = types.enum [ "all" "debug" "info" " warn" "error" "fatal"];
+      default = "info";
+      example = "info";
+      description = "The logging level.";
+    };
+
     openFirewallPorts = mkOption {
       type = types.bool;
       default = false;
@@ -299,6 +306,15 @@ in {
   };
 
   config = let
+    logLevelFromName = name: {
+      "all" = 0;
+      "debug" = 1;
+      "info" = 2;
+      "warn" = 3;
+      "error" = 4;
+      "fatal" = 5;
+    }."${name}";
+
     mkLauncher = instanceName: instanceCfg: let
       desktopItem = pkgs.makeDesktopItem {
         name = "datum_gateway-${instanceName}";
@@ -439,7 +455,8 @@ in {
       "logger": {
         "log_to_console": true,
         "log_to_stderr": false,
-        "log_to_file": false
+        "log_to_file": false,
+        "log_level_console": ${builtins.toString (logLevelFromName cfg.logLevel)}
       }
     }
     '';
