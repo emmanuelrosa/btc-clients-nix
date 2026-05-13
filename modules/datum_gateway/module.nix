@@ -520,8 +520,6 @@ in {
         Type = "simple";
         Restart = "on-failure";
         ReadWritePaths = [ instanceCfg.dataDir ];
-        SocketBindAllow = [ instanceCfg.api.port instanceCfg.stratum.port ];
-        SocketBindDeny = "any";
 
         # Take the config file template and substitute the password.
         ExecStartPre = pkgs.writeShellScript "datum_gateway_${instance}_setup.bash" ''
