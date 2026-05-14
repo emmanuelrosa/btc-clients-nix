@@ -107,6 +107,7 @@ Then, configure the service as follows:
    # If your node has a public IP address, set this to `true` to make the stratum ports accessible for mining (with Braiins).
    # If your node is behind a NAT and you want to mine solo with a miner in your LAN, set this to `true`.
    # If your node is behind a NAT and you want to pool mine, set this to `false` and set up a TCP reverse proxy to tunnel the hashrate to your node.
+   # See the following section for more details.
    openFirewallPorts = true;
  };
 ```
@@ -121,12 +122,8 @@ Nevertheless, you can check the status of your DATUM Gateway instance(s) like th
 
 ### TCP reverse proxy tunnel setup
 
-Currently there are two ways to set up a TCP reverse proxy tunnel for your DATUM Gateway instances:
+To set up a TCP reverse proxy tunnel for your DATUM Gateway instances, you can use the included HashGG module. [HashGG](https://github.com/paulscode/hashgg) provides an easy-to-use web UI to set up a TCP tunnel for DATUM Gateway. Currently, you can choose from either playit.gg or your own (Debian/Fedora) Linux VPS. You can use the [hashgg](../hashgg/) module to set this up.
 
-1. **playit.gg** - [Playit](https://playit.gg/) provides a tunneling service for gamers, but with a premium subscription you can get a TCP tunnel to expose your stratum port to the Internet. You can use the [playit](../playit/) module to _manually_ configure this tunnel.
-2. **hashgg** - [HashGG](https://github.com/paulscode/hashgg) provides an easy way to set up a TCP tunnel for DATUM Gateway. You can choose from either playit.gg (yes, the same one from above) or your own (Debian/Fedora) Linux VPS. You can use the [hashgg](../hashgg/) module for this setup.
-
-From the options discussed above, the simplest method is *hashgg* with the *playit* mode.
 
 ## DATUM Gateway data and ports
 
@@ -147,24 +144,8 @@ Whether it be playit.gg or your own VPS, once set up you should have a public TC
 $ nix shell nixpkgs#netcat nixpkgs#jq
 
 $ (echo '{"id":1,"method":"mining.subscribe","params":[]}'; sleep 1) | nc ENDPOINT_IP ENDPOINT_PORT | head -1 | jq
-{
-    "error": null,
-    "id": 1,
-    "result": [
-       [
-         [
-          "mining.notify",
-          "xxxxxxxx"
-         ],
-         [
-          "mining.set_difficulty",
-          "xxxxxxxx"
-         ]
-      ],
-         "xxxxxxxx",
-         8
-      ]
-}
 ```
 
-Perhaps specific to playit.gg, but the domain name they provided did not work, but the IP address did.
+The command above should spit out some JSON.
+
+**TIP:** Perhaps it's specific to playit.gg, but the domain name they provided did not work, but the IP address did.

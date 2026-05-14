@@ -9,7 +9,6 @@
   outputs = { self, nixpkgs, oldNixpkgs }: {
 
     nixosModules.datum_gateway = import ./modules/datum_gateway/module.nix;
-    nixosModules.playit = import ./modules/playit/module.nix;
     nixosModules.hashgg = import ./modules/hashgg/module.nix;
 
     packages.x86_64-linux = let
