@@ -29,10 +29,9 @@ in stdenvNoCC.mkDerivation rec {
 
   installPhase = ''
     runHook preInstall
-    mkdir -p $out/{bin,share/playit/bin}
-    install ./opt/playit/playitd $out/share/playit/bin/
-    install ./opt/playit/agent $out/share/playit/bin/
-    ln -s $out/share/playit/bin/agent $out/bin/playit
+    mkdir -p $out/bin
+    install ./opt/playit/playitd $out/bin/
+    install ./opt/playit/agent $out/bin/playit
     runHook postInstall
   '';
 

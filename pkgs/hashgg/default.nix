@@ -30,12 +30,6 @@
 let 
   version = "0.3.0.0";
 
-  # Exposes playitd to PATH
-  playitd = runCommand "playitd" {} ''
-    mkdir -p $out/bin
-    cp ${playit}/share/playit/bin/playitd $out/bin/
-  ''; 
-
   # Since Docker/Podman isn't being used,
   # the socat proxy isn't needed.
   # In fact, it can't be used because the port it attempts
@@ -100,7 +94,7 @@ let
         --replace-fail 'const PORT = 3000' 'const PORT = ${builtins.toString port}'
 
       substituteInPlace $out/lib/hashgg/backend/playit-manager.js \
-        --replace-fail "spawn(PLAYIT_BIN, ['--secret', secret]" "spawn(PLAYIT_BIN, ['--secret', secret, '--socket-path', '${dataDirectory}/playitd.socket']"
+        --replace-fail "spawn(PLAYIT_BIN, ['--secret', secret]" "spawn('${playit}/bin/playitd', ['--secret', secret, '--socket-path', '${dataDirectory}/playitd.socket']"
 
       for n in 16 24 32 48 64 96 128 256; do
         size=$n"x"$n
@@ -131,7 +125,7 @@ in buildFHSEnv {
     openssh
     curl
     cacert
-    playitd
+    playit
     app
   ];
 
