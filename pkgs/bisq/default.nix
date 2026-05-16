@@ -5,7 +5,7 @@
 , makeDesktopItem
 , copyDesktopItems
 , imagemagick
-, openjdk11
+, openjdk21
 , dpkg
 , writeScript
 , bash
@@ -19,7 +19,7 @@
 }:
 
 let
-  jdk = openjdk11.override { enableJavaFX = true; };
+  jdk = openjdk21.override { enableJavaFX = true; };
 
   bisq-launcher = args: writeScript "bisq-launcher" ''
     #! ${bash}/bin/bash
@@ -32,7 +32,7 @@ let
 
     classpath=@out@/lib/desktop.jar:@out@/lib/*
 
-    exec "${jdk}/bin/java" -Djpackage.app-version=@version@ -XX:MaxRAM=8g -Xss1280k -XX:+UseG1GC -XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5 -XX:+UseStringDeduplication -Djava.net.preferIPv4Stack=true -classpath $classpath ${args} bisq.desktop.app.BisqAppMain "$@"
+    exec "${jdk}/bin/java" -Djpackage.app-version=@version@ -XX:MaxRAM=8g -Xss1280k -XX:+UseG1GC -XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5 -XX:+UseStringDeduplication -Djava.net.preferIPv4Stack=true --add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED -classpath $classpath ${args} bisq.desktop.app.BisqAppMain "$@"
   '';
 
   bisq-tor = writeScript "bisq-tor" ''
@@ -43,11 +43,11 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "bisq-desktop";
-  version = "1.9.22";
+  version = "1.10.0";
 
   src = fetchurl {
     url = "https://github.com/bisq-network/bisq/releases/download/v${version}/Bisq-64bit-${version}.deb";
-    hash = "sha256-NWoz8JrlMFKT1hsQY2A+otR1d6i+HbbQJjhwikhW7kw=";
+    hash = "sha256-GbqCXQm5SSX/FvuSsG5SWb/qvIs9+a+i90OVoEpZH+0=";
   };
 
   nativeBuildInputs = [
