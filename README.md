@@ -33,7 +33,3 @@ These packages are used to help me maintain this repository:
 - **sparrow-get-source-hashes** - A BASH script for me to get the SHA256 hashes for a specific version of Sparrow wallet.
 - **update-checker** - A BASH script for me to quickly check GitHub for updates to the above packages. 
 - **bisq2.webcam-app** - Launches the [Bisq 2](https://github.com/bisq-network/bisq2) webcam app, to test QR code scanning.
-
-## Other packages
-
-- **Bitcoin Knots BIP-110 Activation Client** - A package for this UASF client is available in another repo (I'm assuming it will eventually be merged into Bitcoin Knots). See [https://github.com/emmanuelrosa/bitcoin-knots-bip-110-nix](https://github.com/emmanuelrosa/bitcoin-knots-bip-110-nix).
