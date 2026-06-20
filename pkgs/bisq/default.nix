@@ -19,6 +19,8 @@
 }:
 
 let
+  version = "1.10.2";
+  archiveName = "Bisq-64bit-${version}.deb";
   jdk = openjdk21.override { enableJavaFX = true; };
 
   bisq-launcher = args: writeScript "bisq-launcher" ''
@@ -41,13 +43,13 @@ let
     exec ${tor}/bin/tor "$@"
   '';
 in
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
+  inherit version;
   pname = "bisq-desktop";
-  version = "1.10.1";
 
   src = fetchurl {
-    url = "https://github.com/bisq-network/bisq/releases/download/v${version}/Bisq-64bit-${version}.deb";
-    hash = "sha256-nef+gqw2lXcf9U75YsvA2ptdugb7R+KKJDeFSjcy0sw=";
+    url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}";
+    hash = "sha256-e7rPUhA6KF3Tz3zlYqEfM9G0owe9hAUFDifKseRvb6A=";
   };
 
   nativeBuildInputs = [
@@ -66,7 +68,7 @@ stdenv.mkDerivation rec {
       name = "Bisq";
       exec = "bisq-desktop";
       icon = "bisq";
-      desktopName = "Bisq ${version}";
+      desktopName = "Bisq ${finalAttrs.version}";
       genericName = "Decentralized bitcoin exchange";
       categories = [ "Network" "P2P" ];
     })
@@ -75,7 +77,7 @@ stdenv.mkDerivation rec {
       name = "Bisq-hidpi";
       exec = "bisq-desktop-hidpi";
       icon = "bisq";
-      desktopName = "Bisq ${version} (HiDPI)";
+      desktopName = "Bisq ${finalAttrs.version} (HiDPI)";
       genericName = "Decentralized bitcoin exchange";
       categories = [ "Network" "P2P" ];
     })
@@ -83,6 +85,35 @@ stdenv.mkDerivation rec {
 
   unpackPhase = ''
     dpkg -x $src .
+  '';
+
+  preUnpack = let
+    signature = fetchurl {
+      url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}.asc";
+      hash = "sha256-kBRaOXuP22DvXMkJ1XQatwvTmu/Ds8FvmUgYnRT7Vg0=";
+    };
+
+    publicKey = {
+      "E222AA02" = fetchurl {
+        url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/E222AA02.asc";
+        hash = "sha256-Ue/UmS6F440/ybEEIAR+pdPEIksAt6QSMN6G5TZVWzc=";
+      };
+
+      "387C8307" = fetchurl {
+        url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/387C8307.asc";
+        hash = "sha256-PrRYZLT0xv82dUscOBgQGKNf6zwzWUDhriAffZbNpmI=";
+      };
+    };
+  in ''
+    pushd $(mktemp -d)
+    export GNUPGHOME=./gnupg
+    mkdir -m 700 -p $GNUPGHOME
+    ln -s $src ./${archiveName}
+    ln -s ${signature} ./signature.asc
+    gpg --import ${publicKey."E222AA02"}
+    gpg --import ${publicKey."387C8307"}
+    gpg --batch --verify signature.asc ${archiveName}
+    popd
   '';
 
   buildPhase = ''
@@ -117,8 +148,6 @@ stdenv.mkDerivation rec {
     runHook postInstall
   '';
 
-  passthru.updateScript = ./update.sh;
-
   meta = with lib; {
     description = "Decentralized bitcoin exchange network";
     homepage = "https://bisq.network";
@@ -128,4 +157,4 @@ stdenv.mkDerivation rec {
     platforms = [ "x86_64-linux" ];
     mainProgram = "bisq-desktop";
   };
-}
+})
