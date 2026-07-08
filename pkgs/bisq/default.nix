@@ -19,7 +19,7 @@
 }:
 
 let
-  version = "1.10.2";
+  version = "1.10.3";
   archiveName = "Bisq-64bit-${version}.deb";
   jdk = openjdk21.override { enableJavaFX = true; };
 
@@ -49,7 +49,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}";
-    hash = "sha256-e7rPUhA6KF3Tz3zlYqEfM9G0owe9hAUFDifKseRvb6A=";
+    hash = "sha256-kzLtadq8gfX6j9XU3PD5kNV43wLDoICPlXdJqULkAWE=";
   };
 
   nativeBuildInputs = [
@@ -90,7 +90,7 @@ stdenv.mkDerivation (finalAttrs: {
   preUnpack = let
     signature = fetchurl {
       url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}.asc";
-      hash = "sha256-kBRaOXuP22DvXMkJ1XQatwvTmu/Ds8FvmUgYnRT7Vg0=";
+      hash = "sha256-+51j+SBp7buukop1T4Gz0YDUga6540BVxDRoU2YE3pY=";
     };
 
     publicKey = {
@@ -99,9 +99,9 @@ stdenv.mkDerivation (finalAttrs: {
         hash = "sha256-Ue/UmS6F440/ybEEIAR+pdPEIksAt6QSMN6G5TZVWzc=";
       };
 
-      "387C8307" = fetchurl {
-        url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/387C8307.asc";
-        hash = "sha256-PrRYZLT0xv82dUscOBgQGKNf6zwzWUDhriAffZbNpmI=";
+      "4A133008" = fetchurl {
+        url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/4A133008.asc";
+        hash = "sha256-UijG3DkJNNTakVJd2wl30mDepa27n6R/Xxfl4sjt0sk=";
       };
     };
   in ''
@@ -111,7 +111,7 @@ stdenv.mkDerivation (finalAttrs: {
     ln -s $src ./${archiveName}
     ln -s ${signature} ./signature.asc
     gpg --import ${publicKey."E222AA02"}
-    gpg --import ${publicKey."387C8307"}
+    gpg --import ${publicKey."4A133008"}
     gpg --batch --verify signature.asc ${archiveName}
     popd
   '';
