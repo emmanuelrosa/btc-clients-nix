@@ -122,6 +122,8 @@ Nevertheless, you can check the status of your DATUM Gateway instance(s) like th
 
 ### TCP reverse proxy tunnel setup
 
+**NOTICE:** HashGG will be removed from this repo.
+
 To set up a TCP reverse proxy tunnel for your DATUM Gateway instances, you can use the included HashGG module. [HashGG](https://github.com/paulscode/hashgg) provides an easy-to-use web UI to set up a TCP tunnel for DATUM Gateway. Currently, you can choose from either playit.gg or your own (Debian/Fedora) Linux VPS. You can use the [hashgg](../hashgg/) module to set this up.
 
 
