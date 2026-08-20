@@ -19,7 +19,7 @@
 }:
 
 let
-  version = "1.10.4";
+  version = "1.10.5";
   archiveName = "Bisq-64bit-${version}.deb";
   jdk = openjdk21.override { enableJavaFX = true; };
 
