@@ -49,7 +49,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}";
-    hash = "sha256-rOFbiuEbeO2qZntUhO+LNhwX6XlvWRU9v0HIAjyHwd8=";
+    hash = "sha256-ekTpewjaCD5Nq44vkB59dqhWuRRXORZh2DEJrfGlsUM=";
   };
 
   nativeBuildInputs = [
