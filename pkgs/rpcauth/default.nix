@@ -7,7 +7,7 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "rpcauth";
-  version = "29.3.knots20260508";
+  version = "29.4.knots20260508";
 
   src = fetchurl {
     url = "https://raw.githubusercontent.com/bitcoinknots/bitcoin/refs/tags/v${finalAttrs.version}/share/rpcauth/rpcauth.py";
