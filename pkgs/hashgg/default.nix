@@ -20,6 +20,7 @@
 , yq-go
 , procps
 , openssh
+, gnugrep
 , playit
 , address ? "127.0.0.1"
 , port ? 3000
@@ -28,7 +29,7 @@
 , label ? null
 }:
 let 
-  version = "0.6.0.0";
+  version = "0.7.2.0";
 
   # Since Docker/Podman isn't being used,
   # the socat proxy isn't needed.
@@ -55,7 +56,7 @@ let
       owner = "paulscode";
       repo = "hashgg";
       rev = "v${version}";
-      hash = "sha256-xBbTFvsLLiXTcEfv4psFmRJkgH01cXCfUYSxK7JpjMI=";
+      hash = "sha256-GijVxuWlEtogML6T+nnuSryP2WB7Q7MbNuIGgQG8MeI=";
     };
 
     dontBuild = true;
@@ -79,7 +80,7 @@ let
       cp ./check-datum.sh $out/bin/
 
       wrapProgram $out/bin/docker_entrypoint.sh \
-        --prefix PATH : ${lib.makeBinPath [ yq-go fake-socat nodejs ]}
+        --prefix PATH : ${lib.makeBinPath [ yq-go fake-socat procps gnugrep curl nodejs ]}
 
       wrapProgram $out/bin/check-tunnel.sh \
         --prefix PATH : ${lib.makeBinPath [ jq curl ]}
@@ -158,7 +159,7 @@ in buildFHSEnv {
   runScript = "/bin/docker_entrypoint.sh";
 
   meta = with lib; {
-    description = "Expose your Datum Gateway stratum port to the internet via playit.gg -- sovereign hash routing for NixOS, no port forwarding required.";
+    description = "Expose your Datum Gateway stratum port to the internet via playit.gg or a Linux VPS -- sovereign hash routing for NixOS, no port forwarding required.";
     homepage = "https://github.com/paulscode/hashgg";
     license = licenses.mit;
 
