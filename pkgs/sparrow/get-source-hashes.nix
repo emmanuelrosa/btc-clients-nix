@@ -10,9 +10,15 @@ writeScriptBin "sparrow-get-source-hashes" ''
     exit 1
   fi
 
-  echo "x86_64..."
+  echo "Downloading sparrowwallet-$@-x86_64.tar.gz"
   ${nix}/bin/nix hash convert --hash-algo sha256 --to sri $(${nix}/bin/nix-prefetch-url https://github.com/sparrowwallet/sparrow/releases/download/$@/sparrowwallet-$@-x86_64.tar.gz)
 
-  echo "aarch64..."
+  echo "Downloading sparrowwallet-$@-aarch64.tar.gz"
   ${nix}/bin/nix hash convert --hash-algo sha256 --to sri $(${nix}/bin/nix-prefetch-url https://github.com/sparrowwallet/sparrow/releases/download/$@/sparrowwallet-$@-aarch64.tar.gz)
+
+  echo "Downloading the manifest"
+  ${nix}/bin/nix hash convert --hash-algo sha256 --to sri $(${nix}/bin/nix-prefetch-url https://github.com/sparrowwallet/sparrow/releases/download/$@/sparrow-$@-manifest.txt)
+
+  echo "Downloading the manifest signature"
+  ${nix}/bin/nix hash convert --hash-algo sha256 --to sri $(${nix}/bin/nix-prefetch-url https://github.com/sparrowwallet/sparrow/releases/download/$@/sparrow-$@-manifest.txt.asc)
 ''
