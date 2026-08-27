@@ -62,17 +62,11 @@ in {
     };
 
     bitcoind = {
-      address = mkOption {
+      url = mkOption {
         type = types.str;
-        default = "127.0.0.1";
-        example = "127.0.0.1";
-        description = "The network IP used by the bitcoind RPC.";
-      };
-
-      port = mkOption {
-        type = types.port;
-        default = 8332;
-        description = "The network port used by the bitcoind RPC.";
+        default = "http://127.0.0.1:8332";
+        example = "http://127.0.0.1:8332";
+        description = "The address used by the bitcoind RPC.";
       };
 
       workUpdatesDelay = mkOption {
@@ -406,7 +400,7 @@ in {
     in pkgs.writeText "datum_gateway_config.json" ''
     {
       "bitcoind": {
-        "rpcurl": "${cfg.bitcoind.address}:${builtins.toString cfg.bitcoind.port}",
+        "rpcurl": "${cfg.bitcoind.url}",
         "rpcuser": "${cfg.bitcoind.user}",
         "rpcpassword": "7893C4DC45BBC26ABE551E799D284048CA32B207",
         "work_update_seconds": ${builtins.toString cfg.bitcoind.workUpdatesDelay},
