@@ -526,7 +526,6 @@ in {
         (builtins.attrValues instances));
 
     systemd.services = builtins.mapAttrs (instance: instanceCfg: {
-      requires = [ "bitcoind-${cfg.network}.service" ];
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = let
