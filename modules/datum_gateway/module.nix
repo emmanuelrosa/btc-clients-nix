@@ -490,11 +490,6 @@ in {
         assertion = !(cfg.stratum.address == "");
         message = "The stratum IP address is required.";
       }
-
-      {
-        assertion = !(cfg.datum.pool.host == "");
-        message = "The datum pool host/IP is required.";
-      }
     ];
 
     environment.systemPackages = builtins.attrValues
