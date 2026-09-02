@@ -7,11 +7,11 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "rpcauth";
-  version = "29.4.knots20260508";
+  version = "31.1";
 
   src = fetchurl {
-    url = "https://raw.githubusercontent.com/bitcoinknots/bitcoin/refs/tags/v${finalAttrs.version}/share/rpcauth/rpcauth.py";
-    hash = "sha256-rDT1wHnWhLf+y1XqY7RpKEFhr/bPMuFcwFLCGMTVbMU=";
+    url = "https://raw.githubusercontent.com/bitcoin/bitcoin/refs/tags/v${finalAttrs.version}/share/rpcauth/rpcauth.py";
+    hash = "sha256-3WFc3/KG8zrqq0QEmoVJc9xszUzenl+LM0GWwDUqFBY=";
   };
 
   dontUnpack = true;
