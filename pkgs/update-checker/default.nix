@@ -48,7 +48,7 @@ in writeScriptBin "update-checker" ''
 
     ${checkForUpdate { package = bitcoin-tui; owner = "janb84"; repo = "bitcoin-tui"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
 
-    ${checkForUpdate { package = rpcauth; owner = "bitcoinknots"; repo = "bitcoin"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
+    ${checkForUpdate { package = rpcauth; owner = "bitcoin"; repo = "bitcoin"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
 
     ${checkForUpdate { package = datum_gateway; owner = "OCEAN-xyz"; repo = "datum_gateway"; versionConverter = "${gnused}/bin/sed -e 's/^v//g'"; }}
 
