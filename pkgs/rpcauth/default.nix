@@ -29,9 +29,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "A utility to generate bitcoind RPC API user/password pairs.";
-    longDescription = "The implementation in this package is obtained from Bitcoin Knots.";
-    homepage = "https://bitcoinknots.org/";
-    changelog = "https://github.com/bitcoinknots/bitcoin/blob/v${finalAttrs.version}/doc/release-notes.md";
+    homepage = "https://bitcoincore.org/";
     maintainers = with lib.maintainers; [
       emmanuelrosa
     ];
