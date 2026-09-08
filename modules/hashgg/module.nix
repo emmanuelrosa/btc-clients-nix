@@ -108,10 +108,6 @@ in {
         (instance: { name = "hashgg-${instance}"; value = instances."${instance}"; }) (builtins.attrNames instances)
       );
   in lib.mkIf cfg.enable {
-    warnings = [
-      "services.hashgg is deprecated and will be removed from btc-clients-nix."
-    ];
-
     assertions = [
       {
         assertion = dgCfg.enable;

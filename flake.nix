@@ -34,9 +34,9 @@
       bitcoin-tui = pkgs.callPackage ./pkgs/bitcoin-tui {};
       rpcauth = pkgs.callPackage ./pkgs/rpcauth {};
       datum_gateway = pkgs.callPackage ./pkgs/datum_gateway {};
-      playit = lib.warn "playit will be removed from btc-clients-nix" pkgs.callPackage ./pkgs/playit {};
+      playit = pkgs.callPackage ./pkgs/playit {};
       playit-get-source-hashes = pkgs.callPackage ./pkgs/playit/get-source-hashes.nix {};
-      hashgg = lib.warn "hashgg will be removed from btc-clients-nix" pkgs.callPackage ./pkgs/hashgg { 
+      hashgg = pkgs.callPackage ./pkgs/hashgg { 
         inherit (self.packages."${system}") playit;
       };
 
