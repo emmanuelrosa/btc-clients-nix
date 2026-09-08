@@ -1,5 +1,8 @@
 # DATUM Gateway NixOS module
 
+**NOTICE:** This DATUM Gateway NixOS module will be removed.
+
+
 This [DATUM Gateway](https://github.com/OCEAN-xyz/datum_gateway) NixOS module can be used to configure one or two instances of DATUM Gateway.
 
 ## Setup

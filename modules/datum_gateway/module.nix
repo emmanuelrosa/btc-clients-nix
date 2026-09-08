@@ -455,6 +455,10 @@ in {
     }
     '';
   in lib.mkIf cfg.enable {
+    warnings = [
+      "services.datum_gateway is deprecated and will be removed from btc-clients-nix."
+    ];
+
     assertions = [
       {
         assertion = !(cfg.api.adminPasswordFile == "");
