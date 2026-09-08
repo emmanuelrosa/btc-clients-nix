@@ -1,5 +1,7 @@
 # HashGG NixOS module
 
+**NOTICE:** This HashGG NixOS module will be removed.
+
 With this HashGG NixOS module you can install HashGG on NixOS with ease!
 
 ## Differences from upstream's HashGG
