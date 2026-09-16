@@ -19,7 +19,7 @@
 }:
 
 let
-  version = "1.10.7";
+  version = "1.10.8";
   archiveName = "Bisq-64bit-${version}.deb";
   jdk = openjdk21.override { enableJavaFX = true; };
 
@@ -49,7 +49,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}";
-    hash = "sha256-PRjpIDiMMF3Av4/3sJnEkCUA0X+IDilrZjUIT275VOc=";
+    hash = "sha256-it03GDQ3Ja21QkwmxmSWNI/PgaW44NG0O0r0jEhjsfs=";
   };
 
   nativeBuildInputs = [
@@ -90,7 +90,7 @@ stdenv.mkDerivation (finalAttrs: {
   preUnpack = let
     signature = fetchurl {
       url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}.asc";
-      hash = "sha256-+srbPApLbBUMYdwI3sWSFOYnQ7lAtBXYsHJvF2sheDM=";
+      hash = "sha256-LWqPSrdlmihLJKhE+2TXtfdDiUtdQL/d6NNbZ0ctlfw=";
     };
 
     publicKey = {
