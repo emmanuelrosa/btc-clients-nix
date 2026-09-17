@@ -19,13 +19,6 @@ The following packages are included in this Nix flake:
 - **bitcoin-tui** - [bitcoin-tui](https://github.com/janb84/bitcoin-tui) is a terminal UI for Bitcoin Core/Knots nodes.
 - **rpcauth** - [rpcauth](https://github.com/bitcoin/bitcoin/blob/master/share/rpcauth/rpcauth.py) is a utility provided by Bitcoin Core (and derivatives such as Bitcoin Knots) which is used to generate username/password pairs for bitcoind RPC authentication. This package obtains rpcauth from Bitcoin Core.
 
-## NixOS modules
-
-The following NixOS modules are included in this Nix flake:
-
-- **datum_gateway** - [DATUM Gateway](modules/datum_gateway) implements lightweight efficient client side decentralized block template creation for solo or pool mining.
-- **hashgg** - [HashGG](modules/hashgg) exposes your Datum Gateway stratum port to the public internet — so any miner, anywhere, can connect to your node and mine blocks you built. 
-
 ### Maintenance packages
 
 These packages are used to help me maintain this repository:
