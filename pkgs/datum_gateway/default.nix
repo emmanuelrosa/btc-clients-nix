@@ -14,12 +14,12 @@
 , imagemagick
 }: stdenv.mkDerivation rec {
   pname = "datum_gateway";
-  version = "0.4.1beta";
+  version = "0.5.1beta";
 
   src = fetchgit {
     url = "https://github.com/OCEAN-xyz/datum_gateway.git";
     rev = "v${version}";
-    hash = "sha256-U+SVvZW5fxOVSbAIa0iB65rBeN/c2I8D/GiXqbFtH9w=";
+    hash = "sha256-OkLzHF7SOuH8SALumv5AncAdIEaLRkm+ioReMbG7A7s=";
     leaveDotGit = true; # Allows the git commit hash to be added to the built executable.
   };
 
