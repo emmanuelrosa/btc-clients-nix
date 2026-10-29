@@ -9,12 +9,12 @@
   }."${stdenvNoCC.hostPlatform.system}";
 
   hash = {
-    x86_64-linux = "sha256-UMqqDiTZJfoaTB76foWSuPuhWwBwGVrdMEquENlUzeE=";
-    aarch64-linux = "sha256-mcjJc2e+xDzmrWgWJlEKTHKWrKwUgTbi7dFf6fm12a0=";
+    x86_64-linux = "sha256-YEhg2KAJv95OKo+oxwmVdZNPXvCG1J+18WefAuilZrM=";
+    aarch64-linux = "sha256-gMMDkielDe/aXL5t0cGY+FLIjabGz21CUhK+cjArAys=";
   }."${stdenvNoCC.hostPlatform.system}";
 in stdenvNoCC.mkDerivation rec {
   pname = "playit";
-  version = "1.0.10";
+  version = "1.1.0";
 
   src = fetchurl {
     inherit hash;
