@@ -29,7 +29,7 @@
 , label ? null
 }:
 let 
-  version = "0.7.2.0";
+  version = "0.7.2.6";
 
   # Since Docker/Podman isn't being used,
   # the socat proxy isn't needed.
@@ -56,7 +56,7 @@ let
       owner = "paulscode";
       repo = "hashgg";
       rev = "v${version}";
-      hash = "sha256-GijVxuWlEtogML6T+nnuSryP2WB7Q7MbNuIGgQG8MeI=";
+      hash = "sha256-ih6FXi7fyWOAPN5EcYxTcFmc/FMda91RLEJbcys05g8=";
     };
 
     dontBuild = true;
