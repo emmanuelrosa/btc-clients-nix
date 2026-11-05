@@ -12,14 +12,13 @@
 , stripJavaArchivesHook
 , tor
 , zip
-, xz
-, findutils
+, unzip
 , procps
 , coreutils
 }:
 
 let
-  version = "1.10.10";
+  version = "1.10.11";
   archiveName = "Bisq-64bit-${version}.deb";
   jdk = openjdk21.override { enableJavaFX = true; };
 
@@ -32,9 +31,11 @@ let
     # whereas Nix only scans for hashes in uncompressed text.
     # ${bisq-tor}
 
+    rm -fR $HOME/.local/share/Bisq/btc_mainnet/tor
+
     classpath=@out@/lib/desktop.jar:@out@/lib/*
 
-    exec "${jdk}/bin/java" -Djpackage.app-version=@version@ -XX:MaxRAM=8g -Xss1280k -XX:+UseG1GC -XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5 -XX:+UseStringDeduplication -Djava.net.preferIPv4Stack=true --add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED -classpath $classpath ${args} bisq.desktop.app.BisqAppMain "$@"
+    exec "${jdk}/bin/java" -Djpackage.app-version=@version@ -XX:MaxRAM=8g -Xss1280k -XX:+UseG1GC -XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5 -XX:+UseStringDeduplication -Djava.net.preferIPv4Stack=true --add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED -classpath $classpath ${args} bisq.desktop.app.BisqAppMain --useTorSandbox=false "$@"
   '';
 
   bisq-tor = writeScript "bisq-tor" ''
@@ -49,7 +50,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}";
-    hash = "sha256-Glxi+VDxwJ3AM1Jel82ntWjq5hykbss6MYquRm5IAHA=";
+    hash = "sha256-wwtd8pp467YoKiqu/FWj+wxWJsBKu+Nq+Je+cv5RtM0=";
   };
 
   nativeBuildInputs = [
@@ -58,9 +59,8 @@ stdenv.mkDerivation (finalAttrs: {
     imagemagick
     makeWrapper
     stripJavaArchivesHook
-    xz
     zip
-    findutils
+    unzip
   ];
 
   desktopItems = [
@@ -90,7 +90,7 @@ stdenv.mkDerivation (finalAttrs: {
   preUnpack = let
     signature = fetchurl {
       url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}.asc";
-      hash = "sha256-u10BAnhLyAY+1B4CJGPJUF6oLIhuB632MHM3VrDNNX0=";
+      hash = "sha256-3hHMOeqsCdsp8JgvoKtB6KHI+/cWikbPnoI0EjEV0O4=";
     };
 
     publicKey = {
@@ -116,15 +116,29 @@ stdenv.mkDerivation (finalAttrs: {
     popd
   '';
 
-  buildPhase = ''
+  buildPhase = let
+    torJarName = "tor-1.0.0";
+  in ''
     # Replace the embedded Tor binary (which is in a Tar archive)
     # with one from Nixpkgs.
 
-    mkdir -p native/linux/x64/
-    cp ${bisq-tor} ./tor
-    tar --sort=name --mtime="@$SOURCE_DATE_EPOCH" -cJf native/linux/x64/tor.tar.xz tor
-    tor_jar_file=$(find ./opt/bisq/lib/app -name "tor-binary-linux64-*.jar")
-    zip -r $tor_jar_file native
+    mkdir ${torJarName}
+    mkdir tor-zip
+
+    pushd ${torJarName}
+    unzip ../opt/bisq/lib/app/${torJarName}.jar
+    popd
+
+    pushd tor-zip
+    unzip ../${torJarName}/tor.zip
+    rm tor
+    cp -L ${bisq-tor} ./tor
+    zip -r ../${torJarName}/tor.zip . 
+    popd
+
+    pushd ${torJarName}
+    zip -r ../opt/bisq/lib/app/${torJarName}.jar .
+    popd
   '';
 
   installPhase = ''
