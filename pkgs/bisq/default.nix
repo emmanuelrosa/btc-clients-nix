@@ -10,11 +10,15 @@
 , writeScript
 , bash
 , stripJavaArchivesHook
-, tor
 , zip
 , unzip
 , procps
 , coreutils
+, patchelf
+
+# Dependencies for bundled Tor
+, glibc
+, libz
 }:
 
 let
@@ -26,22 +30,15 @@ let
     #! ${bash}/bin/bash
     PATH="${lib.makeBinPath [ coreutils procps ]}:$PATH"
 
-    # This is just a comment to convince Nix that Tor is a
-    # runtime dependency; The Tor binary is in a *.jar file,
-    # whereas Nix only scans for hashes in uncompressed text.
-    # ${bisq-tor}
+    # This is just a comment to convince Nix that this package
+    # needs Tor's dependencies to execute the bundled Tor binary.
+    # ${glibc} ${libz}
 
     rm -fR $HOME/.local/share/Bisq/btc_mainnet/tor
 
     classpath=@out@/lib/desktop.jar:@out@/lib/*
 
-    exec "${jdk}/bin/java" -Djpackage.app-version=@version@ -XX:MaxRAM=8g -Xss1280k -XX:+UseG1GC -XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5 -XX:+UseStringDeduplication -Djava.net.preferIPv4Stack=true --add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED -classpath $classpath ${args} bisq.desktop.app.BisqAppMain --useTorSandbox=false "$@"
-  '';
-
-  bisq-tor = writeScript "bisq-tor" ''
-    #! ${bash}/bin/bash
-
-    exec ${tor}/bin/tor "$@"
+    exec "${jdk}/bin/java" -Djpackage.app-version=@version@ -XX:MaxRAM=8g -Xss1280k -XX:+UseG1GC -XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5 -XX:+UseStringDeduplication -Djava.net.preferIPv4Stack=true --add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED -classpath $classpath ${args} bisq.desktop.app.BisqAppMain "$@"
   '';
 in
 stdenv.mkDerivation (finalAttrs: {
@@ -61,6 +58,7 @@ stdenv.mkDerivation (finalAttrs: {
     stripJavaArchivesHook
     zip
     unzip
+    patchelf
   ];
 
   desktopItems = [
@@ -119,23 +117,39 @@ stdenv.mkDerivation (finalAttrs: {
   buildPhase = let
     torJarName = "tor-1.0.0";
   in ''
-    # Replace the embedded Tor binary (which is in a Tar archive)
-    # with one from Nixpkgs.
+    # Prepare the bundled Tor binary to run on NixOS
+    # within the Bisq Tor sandbox, "sandy".
+    # See https://github.com/bisq-network/sandy
 
     mkdir ${torJarName}
     mkdir tor-zip
 
+    # Unpack the .jar containing Tor.
     pushd ${torJarName}
     unzip ../opt/bisq/lib/app/${torJarName}.jar
     popd
 
+    # Unpack the .zip containing the Tor binary.
     pushd tor-zip
     unzip ../${torJarName}/tor.zip
-    rm tor
-    cp -L ${bisq-tor} ./tor
+
+    # Copy all dependencies the OS is supposed to provide,
+    # except ld, because they won't be accessible
+    # from within the sandbox at their /nix/store locations
+    interpreter="$(< "$NIX_CC/nix-support/dynamic-linker")"
+    patchelf --set-interpreter "$interpreter" tor
+
+    cp -L ${glibc}/lib/libc.so.6 ./
+    cp -L ${glibc}/lib/libdl.so.2 ./
+    cp -L ${glibc}/lib/libpthread.so.0 ./
+    cp -L ${glibc}/lib/libm.so.6 ./
+    cp -L ${libz}/lib/libz.so.1 ./
+
+    # Repack the .zip
     zip -r ../${torJarName}/tor.zip . 
     popd
 
+    # Repack the .jar
     pushd ${torJarName}
     zip -r ../opt/bisq/lib/app/${torJarName}.jar .
     popd
