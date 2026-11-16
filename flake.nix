@@ -23,7 +23,6 @@
     );
   in {
     nixosModules.datum_gateway = import ./modules/datum_gateway/module.nix;
-    nixosModules.hashgg = import ./modules/hashgg/module.nix;
 
     packages = forAllSystems (pkgs: system: rec {
       bisq = pkgs.callPackage ./pkgs/bisq {};
