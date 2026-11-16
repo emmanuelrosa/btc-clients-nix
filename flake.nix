@@ -22,8 +22,6 @@
         (func (import nixpkgs { inherit system; }) system)
     );
   in {
-    nixosModules.datum_gateway = import ./modules/datum_gateway/module.nix;
-
     packages = forAllSystems (pkgs: system: rec {
       bisq = pkgs.callPackage ./pkgs/bisq {};
       bisq-desktop = bisq;
