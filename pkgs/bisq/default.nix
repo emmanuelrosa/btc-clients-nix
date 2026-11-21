@@ -22,7 +22,7 @@
 }:
 
 let
-  version = "1.10.11";
+  version = "1.10.12";
   archiveName = "Bisq-64bit-${version}.deb";
   jdk = openjdk21.override { enableJavaFX = true; };
 
@@ -47,7 +47,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}";
-    hash = "sha256-wwtd8pp467YoKiqu/FWj+wxWJsBKu+Nq+Je+cv5RtM0=";
+    hash = "sha256-tVJ60VgrY74GABfSPESc4xFPuGG3Hi7h20gHNc8WhyA=";
   };
 
   nativeBuildInputs = [
@@ -88,7 +88,7 @@ stdenv.mkDerivation (finalAttrs: {
   preUnpack = let
     signature = fetchurl {
       url = "https://github.com/bisq-network/bisq/releases/download/v${finalAttrs.version}/${archiveName}.asc";
-      hash = "sha256-3hHMOeqsCdsp8JgvoKtB6KHI+/cWikbPnoI0EjEV0O4=";
+      hash = "sha256-1X1KcU8Los0P3veEDFlk1IAyxKaDT2QOiTIYJhgM6fU=";
     };
 
     publicKey = {
@@ -115,7 +115,7 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   buildPhase = let
-    torJarName = "tor-1.0.0";
+    torJarName = "tor-1.0.1";
   in ''
     # Prepare the bundled Tor binary to run on NixOS
     # within the Bisq Tor sandbox, "sandy".
