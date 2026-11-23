@@ -30,7 +30,7 @@
 }:
 
 let
-  version = "2.1.15";
+  version = "2.1.16";
 
   jdk = zulu25.override { enableJavaFX = true; };
 
@@ -84,7 +84,7 @@ stdenv.mkDerivation (finalAttrs: {
   # nixpkgs-update: no auto update
   src = fetchurl {
     url = "https://github.com/bisq-network/bisq2/releases/download/v${version}/Bisq-${version}.deb";
-    hash = "sha256-0BTQxGNsCDf86H/ucbLDDtgwiH/ZAgzTNMYR+G4EZ6o=";
+    hash = "sha256-SU7eUSesH7AZ2Znt4r8hZpcQJiVhx2vx+RH1tj1faPY=";
 
     # Verify the upstream Debian package prior to extraction.
     # See https://bisq.wiki/Bisq_2#Installation
@@ -109,7 +109,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   signature = fetchurl {
     url = "https://github.com/bisq-network/bisq2/releases/download/v${version}/Bisq-${version}.deb.asc";
-    hash = "sha256-NOefO60nBw/N+ZbS7FoTs9DgBA+M1YDbHTlCMVF272c=";
+    hash = "sha256-Ht4wO+oZt8mnGfN+S+kVGvo5IoFELBo0t/ERsTwhJsU=";
   };
 
   nativeBuildInputs = [
@@ -156,7 +156,7 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   buildPhase = let
-    torJarName = "tor-1.0.0";
+    torJarName = "tor-1.0.1";
   in ''
     # Prepare the bundled Tor binary to run on NixOS
     # within the Bisq Tor sandbox, "sandy".
